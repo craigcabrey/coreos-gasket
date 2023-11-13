@@ -1,8 +1,10 @@
+ARG FEDORA_VERSION=latest
+
 FROM quay.io/fedora/fedora-coreos:stable as kernel-query
 #We can't use the `uname -r` as it will pick up the host kernel version
 RUN rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' > /kernel-version.txt
 
-FROM quay.io/fedora/fedora:latest as builder
+FROM quay.io/fedora/fedora:${FEDORA_VERSION} as builder
 COPY --from=kernel-query /kernel-version.txt /kernel-version.txt
 WORKDIR /etc/yum.repos.d
 RUN curl -L -O https://src.fedoraproject.org/rpms/fedora-repos/raw/f$(rpm -E %fedora)/f/fedora-updates-archive.repo && \
